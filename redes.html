@@ -3,17 +3,44 @@
 	<head>
 		<meta charset="utf-8">
 		<title> Redes </title>
-		<script src="js/jquery.js"></script>
-		<script src="js/redes.js"></script>
-		<link href="css/redes.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Cantarell:400,700' rel='stylesheet' type='text/css'>
+    	<link href="css/redes.css" rel='stylesheet' type='text/css'>
+    	<link href="css/jquery.FlowupLabels.css" rel='stylesheet' type='text/css'>
+    	<link href="css/ui-lightness/jquery-ui.css" rel="stylesheet">
+		<script src='js/jquery.js'></script>
+		<script src='js/jquery-ui.js'></script>
+		<script src='js/jquery.FlowupLabels.js'></script>
+		<script src='js/redes.js'></script>
+		<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 	</head>
 	<body>
+	<div id="tabs">
+	 <ul>
+    <li><a href="#tabs-1">Añadir usuarios</a></li>
+    <li><a href="#tabs-2">Usuarios</a></li>
+    <li><a href="#tabs-3">Actividad</a></li>
+  </ul>
+	  <div id="tabs-1">
 		<img src="images/gplus.png" id="gplus">
-		<div>
-			<form  id="form">
-				<input type="text" id="nombre">
-				<input type="submit" id="enviar" value="Send">
-			</form>
+		<div id='formContainer'>
+			<form id="formBody" class="FlowupLabels">
+				<div class='fl_wrap'>
+					<label class='fl_label' for='rf_name'>Id:</label>
+					<input class='fl_input' type='text' id='rf_name' value="" autofocus></input>
+				</div>
+				<p>
+					<button class='rf_submit' type='submit' id="enviar">Search</button>
+				</p>
+				</form>
 		</div>
+		
+  </div>
+  <div id="tabs-2">
+    <div id="content"></div>
+  </div>
+  <div id="tabs-3">
+   Para las actividades
+  </div>
+</div>
 	</body>
 </html>
