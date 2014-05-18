@@ -6,7 +6,10 @@ body {
   font-size: 16px;
   font-family: 'Cantarell', sans-serif;
   line-height: 22px;
+  height: 100%;
 }
+
+.msg, .borrar{border: 1px solid;}
 
 #formContainer {
   position: fixed;
@@ -19,6 +22,17 @@ body {
   max-height: 800px;
   display: none;  
 }
+#tabs-3{
+  height: 500px;
+}
+#map{width: 750px;
+    height: 500px;
+ 
+    background-color: snow;
+    position: absolute; 
+ 
+    border: 1px;
+    border-color: black; } 
 
 #formHeader h3 {
   margin: 0;
@@ -79,4 +93,4 @@ body {
   right: 0; 
   border: 0;
 }
-#gplus, #rf-name, .imagen {cursor: pointer;} 
+#gplus, #rf-name, .msg, .imagen {cursor: pointer;} 

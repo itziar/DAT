@@ -12,35 +12,38 @@
 		<script src='js/jquery.FlowupLabels.js'></script>
 		<script src='js/redes.js'></script>
 		<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+
+
 	</head>
 	<body>
 	<div id="tabs">
-	 <ul>
-    <li><a href="#tabs-1">Añadir usuarios</a></li>
-    <li><a href="#tabs-2">Usuarios</a></li>
-    <li><a href="#tabs-3">Actividad</a></li>
-  </ul>
-	  <div id="tabs-1">
-		<img src="images/gplus.png" id="gplus">
-		<div id='formContainer'>
-			<form id="formBody" class="FlowupLabels">
-				<div class='fl_wrap'>
-					<label class='fl_label' for='rf_name'>Id:</label>
-					<input class='fl_input' type='text' id='rf_name' value="" autofocus></input>
-				</div>
-				<p>
-					<button class='rf_submit' type='submit' id="enviar">Search</button>
-				</p>
+		 <ul>
+	    <li><a href="#tabs-1">Añadir usuarios</a></li>
+	    <li><a href="#tabs-2">Usuarios</a></li>
+	    <li><a href="#tabs-3">Actividad</a></li>
+	  </ul>
+		<div id="tabs-1">
+			<img src="images/gplus.png" id="gplus">
+			<div id='formContainer'>
+				<form id="formBody" class="FlowupLabels">
+					<div class='fl_wrap'>
+						<label class='fl_label' for='rf_name'>Id:</label>
+						<input class='fl_input' type='text' id='rf_name' value="" autofocus></input>
+					</div>
+					<p>
+						<button class='rf_submit' type='submit' id="enviar">Search</button>
+					</p>
 				</form>
+			</div>
 		</div>
-		
-  </div>
-  <div id="tabs-2">
-    <div id="content"></div>
-  </div>
-  <div id="tabs-3">
-   Para las actividades
-  </div>
-</div>
+	  	<div id="tabs-2">
+	    	<div id="content"></div>
+	  	</div>
+  		<div id="tabs-3">
+   			<div id="map"></div>
+  		</div>
+	</div>
 	</body>
 </html>
