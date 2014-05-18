@@ -21,38 +21,10 @@ function crear_mapa(){
 	var osm = new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map); 
-	/*function selectorunselect(e){
-		$.each( markercoordlist, function( index, value ) {
-			console.log("index"+index+"value"+value)
-			if (jQuery.inArray(e.feature.id, value)!=-1){ //en index 0 esta el id
-				if ($("#"+value[1]).css("background-color")=="rgb(255, 255, 255)"){
-					$("#"+value[1]).css("background-color", "#E0E3F1")
-					$("#"+value[1]).children(".location").show("slow")
-					getaddressphoto(value[1]);
-					if ($("#markersinfo").is(":hidden")){
-						$("#markersinfo").show();
-					}
-				}else{
-					$("#"+value[1]).css("background-color", "rgb(255, 255, 255)")
-					$("#"+value[1]).children(".location").hide("slow")
-					$("#addr"+value[1]).remove();
-					if ($("#markersinfo").html()==""){
-						$("#markersinfo").hide();
-					}
-				}
-			}
-		});
-	}*/
-	//se añaden todas las marcas que se necesiten
 	
-
-	// segunda parte
-		function onMapClick(e) {
-			L.marker(e.latlng).addTo(map);
-    		alert("You clicked the map at " + e.latlng);
-		}
-		map.on('click', onMapClick);
 }
+
+
 	function createnode(elem, id, nameclass, html){
 		var item = document.createElement(elem);
 		item.setAttribute("id",id);
@@ -148,6 +120,42 @@ function crear_mapa(){
 		
 	}
 
+	function photoflickr(id, lat, lon){
+		var NominatimAPI = 'http://nominatim.openstreetmap.org/reverse?json_callback=?';
+	$.getJSON( NominatimAPI, {
+		lat: lat,
+		lon: lon,
+		zoom: 27,
+		addressdetails: 1,
+		format: "json"
+	})
+	.done(function( data1 ) {
+		var content = "<div id='addr" + id + "' class='markerinfo'><div class='address'><div>Lon: " + lon + "</div><div>Lat: " + lat + "</div><div>Address: " + data1.display_name + "</div></div><div class='imagenes'></div></div>"
+		$("#markersinfo").append(content);
+		var flickerAPI = "http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+		$.getJSON( flickerAPI, {
+			tags: data1.address.city,
+			tagmode: "any",
+			format: "json"
+		})
+		.done(function( data2 ) {
+			$.each( data2.items, function( i, item ) {
+				$( "<img/>" ).attr( "src", item.media.m ).appendTo("#addr"+id+" "+".imagenes");//mirar
+				if ( i === 0 ) {
+					return false;
+				}
+			});
+		});
+	});
+	}
+
+	function selectmsg(id, lat, lon){
+		L.marker([lat,lon]).bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+		console.log("here");
+		photoflickr(id, lat, lon);
+		//L.marker([lat, lon]).removeFrom(map);//setIcon(iconUrl:"layers.png");
+	}
+
 $(document).ready(function(){
 	crear_mapa();
 	
@@ -218,11 +226,15 @@ $(document).ready(function(){
 			var lat = $(this).children(".location").children(".latitud").html();
 			console.log(lon);
 			console.log(lat);
+			selectmsg(id, lat, lon);
 		}else{
 			console.log("hide");
 			$("#"+id).children(".location").hide();
+			$("#markersinfo").html("");
 		}
 	});
+
+	
 	
 	//para el formulario que salga con la biblioteca flowuplabels
 	(function(){
