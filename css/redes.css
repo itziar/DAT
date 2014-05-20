@@ -10,7 +10,6 @@ body {
 }
 
 .msg, .borrar{border: 1px solid;}
-
 #formContainer {
   position: fixed;
   top: 7%;

@@ -52,7 +52,7 @@ function crear_mapa(){
 					messages.appendChild(divmessages);
 					if(resp.items[i]["location"]!=undefined){
 						messages.setAttribute("class", "msg");
-						messages.setAttribute("id", "msg"+idmsg);
+						messages.setAttribute("id", idmsg);
 						eleminfo=createnode("div", "", "locationinfo", "Localización")
 						messages.appendChild(eleminfo);
 						elem=createnode("div", "", "location", "")
@@ -77,7 +77,7 @@ function crear_mapa(){
 	}
 
 	//muesta el usuario
-	function makeApiCallContact() {
+	function makeApiCallContact(uid) {
 		gapi.client.setApiKey(apiKey);
 		gapi.client.load('plus', 'v1', function(){
 			var request = gapi.client.plus.people.get({
@@ -92,8 +92,9 @@ function crear_mapa(){
 					var img = "<img src='"+resp.image.url+"'class='imagen'>";
 					var name = "<span> "+resp.displayName+" -";
 					var genere = "- "+resp.gender+"</span>";
-					var borrar="<div class=borrar>BORRAR</div>";
+					var borrar="<button type='button' class='btn btn-danger borrar'>BORRAR</button>";
 					//console.log(uid)
+					$("#"+uid).children(".borrar").hide();
 					var heading = "<div id ='"+uid+"'>"+img+name+genere+borrar+"</div>";
 					$('#content').append(heading);
 					makeApiCallActivities(uid);
@@ -103,21 +104,33 @@ function crear_mapa(){
 		});
 	};
 
-	function addmark(lon, lat, idmsg){
+	function addmark(lon, lat, idmsg, markers){
 		var markercoord=[];
 		//latlon=new google.maps.LatLng(lat, lon)
 		//mapholder=document.getElementById('map')
 		console.log("lon"+lon+"lat"+lat+"idmsg"+idmsg);
-		var marca=L.marker([lat, lon]).addTo(map);
-		markercoord.push(marca);
+		id=idmsg
+		var id=L.marker([lat,lon]).bindPopup(lat+"lon"+lon).addTo(map);
+		markercoord.push(id);
 		markercoord.push(idmsg);
 		markercoordlist.push(markercoord);
+		markers.addLayer(id);
+		console.log(markers)
 			//.bindPopup(idmsg).openPopup();
 
 
 
 		//var popup = L.popup();
 		
+	}
+
+	function onMapClick(e){
+		marker=new L.Marker(e.latlng);
+		map.removeLayer(marker);
+	}
+
+	function onRemove(map){
+		map.removeLayer(markers);
 	}
 
 	function photoflickr(id, lat, lon){
@@ -140,17 +153,28 @@ function crear_mapa(){
 		})
 		.done(function( data2 ) {
 			$.each( data2.items, function( i, item ) {
-				$( "<img/>" ).attr( "src", item.media.m ).appendTo("#addr"+id+" "+".imagenes");//mirar
-				if ( i === 0 ) {
-					return false;
-				}
+				$( "<img/>" ).attr( "src", item.media.m ).appendTo("#addr"+id+" "+".imagenes");
 			});
 		});
 	});
 	}
 
-	function selectmsg(id, lat, lon){
-		L.marker([lat,lon]).bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+	function selectmsg(id, lat, lon, markers){
+	//map.removeLayer(markercoordlist[1].id markers[lat,lon]);
+	console.log("here id "+id+" "+markers[markercoordlist[id]]);
+
+		var myIcon = L.icon({
+    iconUrl: 'images.png',
+    iconRetinaUrl: 'images.png',
+    iconSize: [38, 95],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+    shadowUrl: 'marker-shadow.png',
+    shadowRetinaUrl: 'marker-shadow.png',
+    shadowSize: [68, 95],
+    shadowAnchor: [22, 94]
+});
+		map.removeLayer(L.marker([lat,lon]));// ,{icon: myIcon}).addTo(map);
 		console.log("here");
 		photoflickr(id, lat, lon);
 		//L.marker([lat, lon]).removeFrom(map);//setIcon(iconUrl:"layers.png");
@@ -158,7 +182,7 @@ function crear_mapa(){
 
 $(document).ready(function(){
 	crear_mapa();
-	
+	markers=new L.FeatureGroup();
 	idmsg=0;
 	var hideform=true;
 	$("#gplus").click(function() {
@@ -172,6 +196,18 @@ $(document).ready(function(){
 			hideform=true;
 		}
 	});
+	setTimeout(function(){
+		var savedidlist = localStorage.getItem('idlist');
+		if ((savedidlist==null) || (savedidlist.split(",")=="")){
+			idlist=[]
+		}else{
+			idlist=savedidlist.split(",")
+			$.each( idlist, function( index, value ) {
+				makeApiCallContact(value);
+				makeApiCallActivities(value);
+			})
+		}
+	},1000)
 
 	$("#formBody").submit( function(e) {
 		e.preventDefault();
@@ -182,14 +218,13 @@ $(document).ready(function(){
 			$("#formContainer").hide("slow");
 			uid = $("input").val();
 			$("input").val("");
-			makeApiCallContact();
+			idlist.push(uid);
+			localStorage.setItem("idlist", idlist);
+			makeApiCallContact(uid);
 		};
 	});
 	
-	function onRemove(map){
-		map.remove();
-		crear_mapa();
-	}
+	
 
 
 	$("#content").on('click', '.imagen',function() {  
@@ -200,19 +235,30 @@ $(document).ready(function(){
 				var lon = $(this).children(".location").children(".longitud").html();
 				var lat = $(this).children(".location").children(".latitud").html();
 				if (lon!=undefined && lat!=undefined){
-					addmark(lon, lat, $(this).attr("id"));
+					addmark(lon, lat, $(this).attr("id"), markers);
 				}
 			})
+			map.addLayer(markers);
 		}else{
 			$("#"+id).children(".activities").hide();
 			onRemove(map);
 		}
 	});
+
+	$("#content").on("mouseenter", ".imagen", function(){
+		if($(".borrar").is(":hidden")){
+		$(".borrar").show();
+	}else{
+		$(".borrar").hide();
+	}
+	})
 	
 	$("#content").on('click', '.borrar',function() {  
 		id=$(this).parent().attr("id");
 		$("#"+id).remove();
 		//id.remove();
+		idlist.splice(idlist.indexOf(id,1));
+		localStorage.setItem('idlist', idlist);
 		onRemove(map);
 	});
 
@@ -226,11 +272,14 @@ $(document).ready(function(){
 			var lat = $(this).children(".location").children(".latitud").html();
 			console.log(lon);
 			console.log(lat);
-			selectmsg(id, lat, lon);
+			selectmsg(id, lat, lon,markers);
 		}else{
 			console.log("hide");
 			$("#"+id).children(".location").hide();
 			$("#markersinfo").html("");
+			var lon = $(this).children(".location").children(".longitud").html();
+			var lat = $(this).children(".location").children(".latitud").html();
+			L.marker([lat,lon]).addTo(map);
 		}
 	});
 
