@@ -21,7 +21,6 @@ function crear_mapa(){
 	var osm = new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map); 
-	
 }
 
 
@@ -52,7 +51,7 @@ function crear_mapa(){
 					messages.appendChild(divmessages);
 					if(resp.items[i]["location"]!=undefined){
 						messages.setAttribute("class", "msg");
-						messages.setAttribute("id", idmsg);
+						messages.setAttribute("id", "msg"+idmsg);
 						eleminfo=createnode("div", "", "locationinfo", "Localización")
 						messages.appendChild(eleminfo);
 						elem=createnode("div", "", "location", "")
@@ -68,6 +67,7 @@ function crear_mapa(){
 						messages.setAttribute("id", "msg"+idmsg)
 					}
 					activities.appendChild(messages);
+					
 				}
 				$("#" + uid ).append(activities);
 				$("#" + uid ).children(".activities").children(".msg").children(".location").hide();
@@ -89,14 +89,16 @@ function crear_mapa(){
 					console.log(resp.error)
 					$('#content').append("<p>Id does not exist: no image, name and genere</p>");
 				}else{
-					var img = "<img src='"+resp.image.url+"'class='imagen'>";
+					var img = "<img src='"+resp.image.url+"'class='img-circle imagen'>";
 					var name = "<span> "+resp.displayName+" -";
 					var genere = "- "+resp.gender+"</span>";
 					var borrar="<button type='button' class='btn btn-danger borrar'>BORRAR</button>";
 					//console.log(uid)
-					$("#"+uid).children(".borrar").hide();
-					var heading = "<div id ='"+uid+"'>"+img+name+genere+borrar+"</div>";
+
+					var heading = "<div id ='"+uid+"'>"+img+name+genere+"</div>";
 					$('#content').append(heading);
+					$('#'+uid).append(borrar);
+					$("#"+uid).children(".borrar").hide();
 					makeApiCallActivities(uid);
 				}
 			});
@@ -108,26 +110,33 @@ function crear_mapa(){
 		var markercoord=[];
 		//latlon=new google.maps.LatLng(lat, lon)
 		//mapholder=document.getElementById('map')
-		console.log("lon"+lon+"lat"+lat+"idmsg"+idmsg);
+	//	console.log("lon"+lon+"lat"+lat+"idmsg"+idmsg);
 		id=idmsg
-		var id=L.marker([lat,lon]).bindPopup(lat+"lon"+lon).addTo(map);
+		var id=L.marker([lat,lon]).bindPopup("lat "+lat+" lon "+lon).addTo(map);
 		markercoord.push(id);
 		markercoord.push(idmsg);
 		markercoordlist.push(markercoord);
 		markers.addLayer(id);
-		console.log(markers)
-			//.bindPopup(idmsg).openPopup();
-
-
-
-		//var popup = L.popup();
-		
+		id.on("click", function(e){
+			$.each(markercoordlist, function(index, value){
+				if (jQuery.inArray(id, value)!=-1){
+					idm=value[1];
+					if($("#"+idm).children(".location").is(":hidden")){			
+						$("#"+idm).children(".location").show();
+						var longitud=$("#"+idm).children(".location").children(".longitud").html();
+						var latitud=$("#"+idm).children(".location").children(".latitud").html()
+						$("#foto").show();
+						photoflickr(idm, latitud, longitud);		
+					}else{
+						$("#"+idm).children(".location").hide();
+						$("#markersinfo").html("");
+						$("#foto").hide();
+					}
+				}
+			})		
+		})		
 	}
 
-	function onMapClick(e){
-		marker=new L.Marker(e.latlng);
-		map.removeLayer(marker);
-	}
 
 	function onRemove(map){
 		map.removeLayer(markers);
@@ -159,28 +168,29 @@ function crear_mapa(){
 	});
 	}
 
-	function selectmsg(id, lat, lon, markers){
-	//map.removeLayer(markercoordlist[1].id markers[lat,lon]);
-	console.log("here id "+id+" "+markers[markercoordlist[id]]);
+	function selectmsg(value, index){
+		var marker=markercoordlist[index][0];
+		marker.openPopup(marker.getLatLng());
+		id=value[1];
+		var longitud=$("#"+id).children(".location").children(".longitud").html();
+		var latitud=$("#"+id).children(".location").children(".latitud").html()
+		photoflickr(id, latitud, longitud);
+	}
 
-		var myIcon = L.icon({
-    iconUrl: 'images.png',
-    iconRetinaUrl: 'images.png',
-    iconSize: [38, 95],
-    iconAnchor: [22, 94],
-    popupAnchor: [-3, -76],
-    shadowUrl: 'marker-shadow.png',
-    shadowRetinaUrl: 'marker-shadow.png',
-    shadowSize: [68, 95],
-    shadowAnchor: [22, 94]
-});
-		map.removeLayer(L.marker([lat,lon]));// ,{icon: myIcon}).addTo(map);
-		console.log("here");
-		photoflickr(id, lat, lon);
-		//L.marker([lat, lon]).removeFrom(map);//setIcon(iconUrl:"layers.png");
+	function unselectmsg(value, index){
+		console.log(value+"index"+index)
+		var marker=markercoordlist[index][0];
+		console.log(marker);
+		marker.closePopup(marker.getLatLng());
+		id=value[1];
+		var longitud=$("#"+id).children(".location").children(".longitud").html();
+		var latitud=$("#"+id).children(".location").children(".latitud").html()
+		$("#markersinfo").html("");
 	}
 
 $(document).ready(function(){
+	$("#mapa").hide();
+	$("#foto").hide();
 	crear_mapa();
 	markers=new L.FeatureGroup();
 	idmsg=0;
@@ -196,6 +206,7 @@ $(document).ready(function(){
 			hideform=true;
 		}
 	});
+
 	setTimeout(function(){
 		var savedidlist = localStorage.getItem('idlist');
 		if ((savedidlist==null) || (savedidlist.split(",")=="")){
@@ -218,19 +229,29 @@ $(document).ready(function(){
 			$("#formContainer").hide("slow");
 			uid = $("input").val();
 			$("input").val("");
-			idlist.push(uid);
-			localStorage.setItem("idlist", idlist);
-			makeApiCallContact(uid);
+			add=true;
+			$.each(idlist,function(index,value){
+				console.log("index"+index+"value"+value+"uid"+uid);
+				if(uid==value){
+					add=false;
+				};
+			})
+			if (add){
+				idlist.push(uid);
+				localStorage.setItem("idlist", idlist);
+				makeApiCallContact(uid);	
+			}else{
+				alert("user ya añadido");
+			}
+			
 		};
 	});
 	
-	
-
-
 	$("#content").on('click', '.imagen',function() {  
 		id=$(this).parent().attr("id");
 		if($("#"+id).children(".activities").is(":hidden")){
 			$("#"+id).children(".activities").show();
+			$("#mapa").show();
 			$(this).parent().children(".activities").children(".msg").each(function(i){
 				var lon = $(this).children(".location").children(".longitud").html();
 				var lat = $(this).children(".location").children(".latitud").html();
@@ -242,48 +263,46 @@ $(document).ready(function(){
 		}else{
 			$("#"+id).children(".activities").hide();
 			onRemove(map);
+			$("#mapa").hide();
 		}
 	});
 
 	$("#content").on("mouseenter", ".imagen", function(){
-		if($(".borrar").is(":hidden")){
-		$(".borrar").show();
-	}else{
-		$(".borrar").hide();
-	}
+		id=$(this).parent().attr("id");
+		if($("#"+id).children(".borrar").is(":hidden")){
+			$("#"+id).children(".borrar").show();
+		}else{
+			$("#"+id).children(".borrar").hide();
+		}
+		console.log(id);
 	})
 	
 	$("#content").on('click', '.borrar',function() {  
 		id=$(this).parent().attr("id");
 		$("#"+id).remove();
-		//id.remove();
 		idlist.splice(idlist.indexOf(id,1));
 		localStorage.setItem('idlist', idlist);
-		onRemove(map);
+		//onRemove(map);
 	});
 
 	$("#content").on('click', '.msg',function() {  
 		id=$(this).attr("id");
-		console.log(id);
-		if($("#"+id).children(".location").is(":hidden")){
-			console.log("show");
-			$("#"+id).children(".location").show();
-			var lon = $(this).children(".location").children(".longitud").html();
-			var lat = $(this).children(".location").children(".latitud").html();
-			console.log(lon);
-			console.log(lat);
-			selectmsg(id, lat, lon,markers);
-		}else{
-			console.log("hide");
-			$("#"+id).children(".location").hide();
-			$("#markersinfo").html("");
-			var lon = $(this).children(".location").children(".longitud").html();
-			var lat = $(this).children(".location").children(".latitud").html();
-			L.marker([lat,lon]).addTo(map);
-		}
+		$.each(markercoordlist, function(index, value){
+			if (jQuery.inArray(id, value)!=-1){
+				if($("#"+id).children(".location").is(":hidden")){			
+					$("#"+id).children(".location").show();
+					console.log(id)
+					$("#foto").show();
+					selectmsg(value, index);					
+				}else{
+					$("#"+id).children(".location").hide();
+					unselectmsg(value, index);
+					$("#foto").hide();
+				}
+			}
+		})		
 	});
 
-	
 	
 	//para el formulario que salga con la biblioteca flowuplabels
 	(function(){
