@@ -263,6 +263,7 @@ $(document).ready(function(){
 		}else{
 			$("#"+id).children(".activities").hide();
 			onRemove(map);
+			markers=new L.FeatureGroup();
 			$("#mapa").hide();
 		}
 	});
