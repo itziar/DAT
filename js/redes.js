@@ -89,14 +89,17 @@ function crear_mapa(){
 					console.log(resp.error)
 					$('#content').append("<p>Id does not exist: no image, name and genere</p>");
 				}else{
-					var img = "<img src='"+resp.image.url+"'class='img-circle imagen'>";
+					var img = "<img src='"+resp.image.url+"'class='media-object dp img-circle imagen'>";
 					var name = "<span> "+resp.displayName+" -";
 					var genere = "- "+resp.gender+"</span>";
-					var borrar="<button type='button' class='btn btn-danger borrar'>BORRAR</button>";
+					var borrar='<button type="button" class=" borrar btn btn-labeled btn-danger"><span class="btn-label"><i class="glyphicon glyphicon-trash"></i></span>Trash</button>';
 					//console.log(uid)
-
+              		var abajo='<i class="glyphicon glyphicon-chevron-down text-muted"></i>';
 					var heading = "<div id ='"+uid+"'>"+img+name+genere+"</div>";
 					$('#content').append(heading);
+					
+					$('#'+uid).append(abajo);
+
 					$('#'+uid).append(borrar);
 					$("#"+uid).children(".borrar").hide();
 					makeApiCallActivities(uid);
@@ -247,28 +250,9 @@ $(document).ready(function(){
 		};
 	});
 	
-	$("#content").on('click', '.imagen',function() {  
-		id=$(this).parent().attr("id");
-		if($("#"+id).children(".activities").is(":hidden")){
-			$("#"+id).children(".activities").show();
-			$("#mapa").show();
-			$(this).parent().children(".activities").children(".msg").each(function(i){
-				var lon = $(this).children(".location").children(".longitud").html();
-				var lat = $(this).children(".location").children(".latitud").html();
-				if (lon!=undefined && lat!=undefined){
-					addmark(lon, lat, $(this).attr("id"), markers);
-				}
-			})
-			map.addLayer(markers);
-		}else{
-			$("#"+id).children(".activities").hide();
-			onRemove(map);
-			markers=new L.FeatureGroup();
-			$("#mapa").hide();
-		}
-	});
+	
 
-	$("#content").on("mouseenter", ".imagen", function(){
+	$("#content").on("click", ".imagen", function(){
 		id=$(this).parent().attr("id");
 		if($("#"+id).children(".borrar").is(":hidden")){
 			$("#"+id).children(".borrar").show();
@@ -285,6 +269,31 @@ $(document).ready(function(){
 		localStorage.setItem('idlist', idlist);
 		//onRemove(map);
 	});
+
+	$("#content").on('click', '.glyphicon', function(){
+		id=$(this).parent().attr("id");
+		if($("#"+id).children(".activities").is(":hidden")){
+			arriba='<i class="glyphicon glyphicon-chevron-up text-muted"></i>';
+			$("#"+id).children(".glyphicon").replaceWith(arriba);
+			$("#"+id).children(".activities").show();
+			$("#mapa").show();
+			$(this).parent().children(".activities").children(".msg").each(function(i){
+				var lon = $(this).children(".location").children(".longitud").html();
+				var lat = $(this).children(".location").children(".latitud").html();
+				if (lon!=undefined && lat!=undefined){
+					addmark(lon, lat, $(this).attr("id"), markers);
+				}
+			})
+			map.addLayer(markers);
+		}else{
+			abajo='<i class="glyphicon glyphicon-chevron-down text-muted"></i>';
+			$("#"+id).children(".glyphicon").replaceWith(abajo);
+			$("#"+id).children(".activities").hide();
+			onRemove(map);
+			markers=new L.FeatureGroup();
+			$("#mapa").hide();
+		}		
+	})
 
 	$("#content").on('click', '.msg',function() {  
 		id=$(this).attr("id");
