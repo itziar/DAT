@@ -97,10 +97,8 @@ function crear_mapa(){
               		var abajo='<i class="glyphicon glyphicon-chevron-down text-muted"></i>';
 					var heading = "<div id ='"+uid+"'>"+img+name+genere+"</div>";
 					$('#content').append(heading);
-					
-					$('#'+uid).append(abajo);
-
 					$('#'+uid).append(borrar);
+					$('#'+uid).append(abajo);
 					$("#"+uid).children(".borrar").hide();
 					makeApiCallActivities(uid);
 				}
@@ -125,12 +123,14 @@ function crear_mapa(){
 				if (jQuery.inArray(id, value)!=-1){
 					idm=value[1];
 					if($("#"+idm).children(".location").is(":hidden")){			
+						$("#"+idm).css("background-color", "#AFEEEE")
 						$("#"+idm).children(".location").show();
 						var longitud=$("#"+idm).children(".location").children(".longitud").html();
 						var latitud=$("#"+idm).children(".location").children(".latitud").html()
 						$("#foto").show();
 						photoflickr(idm, latitud, longitud);		
 					}else{
+						$("#"+idm).css("background-color", "")
 						$("#"+idm).children(".location").hide();
 						$("#markersinfo").html("");
 						$("#foto").hide();
@@ -175,6 +175,7 @@ function crear_mapa(){
 		var marker=markercoordlist[index][0];
 		marker.openPopup(marker.getLatLng());
 		id=value[1];
+		$("#"+id).css("background-color", "#AFEEEE")
 		var longitud=$("#"+id).children(".location").children(".longitud").html();
 		var latitud=$("#"+id).children(".location").children(".latitud").html()
 		photoflickr(id, latitud, longitud);
@@ -186,6 +187,7 @@ function crear_mapa(){
 		console.log(marker);
 		marker.closePopup(marker.getLatLng());
 		id=value[1];
+		$("#"+id).css("background-color", "")
 		var longitud=$("#"+id).children(".location").children(".longitud").html();
 		var latitud=$("#"+id).children(".location").children(".latitud").html()
 		$("#markersinfo").html("");
@@ -273,8 +275,6 @@ $(document).ready(function(){
 	$("#content").on('click', '.glyphicon', function(){
 		id=$(this).parent().attr("id");
 		if($("#"+id).children(".activities").is(":hidden")){
-			arriba='<i class="glyphicon glyphicon-chevron-up text-muted"></i>';
-			$("#"+id).children(".glyphicon").replaceWith(arriba);
 			$("#"+id).children(".activities").show();
 			$("#mapa").show();
 			$(this).parent().children(".activities").children(".msg").each(function(i){
@@ -286,8 +286,6 @@ $(document).ready(function(){
 			})
 			map.addLayer(markers);
 		}else{
-			abajo='<i class="glyphicon glyphicon-chevron-down text-muted"></i>';
-			$("#"+id).children(".glyphicon").replaceWith(abajo);
 			$("#"+id).children(".activities").hide();
 			onRemove(map);
 			markers=new L.FeatureGroup();

@@ -7,20 +7,25 @@ body {
   line-height: 22px;
   height: 100%;
 }
+#tabs{
+  background: LightCyan;
+}
 
+.imagen{display: inline-block; margin-bottom: 10px;}
 .btn-label {position: relative;left: -12px;display: inline-block;padding: 6px 12px;background: rgba(0,0,0,0.15);border-radius: 3px 0 0 3px;}
 .btn-labeled {padding-top: 0;padding-bottom: 0;}
 .btn { margin-bottom:10px; }
 
+.glyphicon-chevron-down{right: -10px;}
 .media
 {
-        /*box-shadow:0px 0px 4px -2px #000;*/
-        margin: 20px 0;
+        box-shadow:0px 0px 4px -2px #000;
+        margin: 20px;
         padding:30px;
     }
     .dp
     {
-        border:10px solid #eee;
+        border:10px solid DeepSkyBlue;
         transition: all 0.2s ease-in-out;
     }
     .dp:hover
@@ -33,6 +38,24 @@ body {
     }
 
 .msg, .borrar{border: 1px solid;}
+
+.locationinfo {
+    font-size: 70%;
+    margin-bottom: 5px;
+    margin-right: 20px;
+    text-align: right;
+}
+.contentmsg{
+    background-color: #F2F2F2;
+  border: #BDBDBD 1px solid;
+  border-radius: 3px;
+  width: 96%;
+  height: 10%;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
 #formContainer {
   position: fixed;
   top: 7%;
@@ -115,4 +138,5 @@ body {
   right: 0; 
   border: 0;
 }
-#gplus, #rf-name, .msg, .imagen {cursor: pointer;} 
+#gplus, #rf-name, .msg, .glyphicon, .imagen {cursor: pointer;} 
+
