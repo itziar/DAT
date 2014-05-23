@@ -66,8 +66,7 @@ function crear_mapa(){
 						messages.setAttribute("class", "msg");
 						messages.setAttribute("id", "msg"+idmsg)
 					}
-					activities.appendChild(messages);
-					
+					activities.appendChild(messages);				
 				}
 				$("#" + uid ).append(activities);
 				$("#" + uid ).children(".activities").children(".msg").children(".location").hide();
@@ -109,9 +108,6 @@ function crear_mapa(){
 
 	function addmark(lon, lat, idmsg, markers){
 		var markercoord=[];
-		//latlon=new google.maps.LatLng(lat, lon)
-		//mapholder=document.getElementById('map')
-	//	console.log("lon"+lon+"lat"+lat+"idmsg"+idmsg);
 		id=idmsg
 		var id=L.marker([lat,lon]).bindPopup("lat "+lat+" lon "+lon).addTo(map);
 		markercoord.push(id);
@@ -200,6 +196,11 @@ $(document).ready(function(){
 	markers=new L.FeatureGroup();
 	idmsg=0;
 	var hideform=true;
+
+	$('.cycle').cyclotron();
+
+    //$(".cycle").css('cursor', 'url(http://i.imgur.com/FrQFOJo.png),auto');
+
 	$("#gplus").click(function() {
 		if (hideform){
 			console.log("show")
@@ -269,7 +270,6 @@ $(document).ready(function(){
 		$("#"+id).remove();
 		idlist.splice(idlist.indexOf(id,1));
 		localStorage.setItem('idlist', idlist);
-		//onRemove(map);
 	});
 
 	$("#content").on('click', '.glyphicon', function(){
