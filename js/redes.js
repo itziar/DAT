@@ -15,134 +15,130 @@ var clientId = '723696862579-1d0lvs6pl2pjii76b4jjbvi6d79ioii9.apps.googleusercon
 function crear_mapa(){
 	map = L.map('map', {
 		zoom: 13
- 	});
- 	map.setView([40.2838, -3.8215],2);
- 
+	});
+	map.setView([40.2838, -3.8215],2);
 	var osm = new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 		attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map); 
 }
 
 
-	function createnode(elem, id, nameclass, html){
-		var item = document.createElement(elem);
-		item.setAttribute("id",id);
-		item.setAttribute('class', nameclass);
-		item.innerHTML = html;
-		return item
-	}
+function createnode(elem, id, nameclass, html){
+	var item = document.createElement(elem);
+	item.setAttribute("id",id);
+	item.setAttribute('class', nameclass);
+	item.innerHTML = html;
+	return item
+}
 
-	function makeApiCallActivities(uid){
-		var markercoord=[];
-		gapi.client.load('plus','v1', function(){
-			var request=gapi.client.plus.activities.list({
-				'collection': 'public',
-				'userId': uid
-			});
-			
-			umark.push(uid);
-			request.execute(function(resp){
-				var activities=document.createElement('div');
-				activities.setAttribute('class', 'activities');
-				for(i=0; i<resp.items.length;i++){
-					idmsg++;
-					var messages=document.createElement('div');
-					divmessages=createnode("div", "", "contentmsg", resp.items[i].title);
-					messages.appendChild(divmessages);
-					if(resp.items[i]["location"]!=undefined){
-						messages.setAttribute("class", "msg");
-						messages.setAttribute("id", "msg"+idmsg);
-						eleminfo=createnode("div", "", "locationinfo", "Localización")
-						messages.appendChild(eleminfo);
-						elem=createnode("div", "", "location", "")
-						item=createnode("div", "", "latitud", resp.items[i].location.position.latitude)
-						elem.appendChild(item);
-						item=createnode("div", "", "longitud", resp.items[i].location.position.longitude)
-						marcas=L.marker([resp.items[i].location.position.latitude, resp.items[i].location.position.longitude]);
-						umark.push(marcas);
-						elem.appendChild(item);
-						messages.appendChild(elem);
-					}else{
-						messages.setAttribute("class", "msg");
-						messages.setAttribute("id", "msg"+idmsg)
-					}
-					activities.appendChild(messages);				
-				}
-				$("#" + uid ).append(activities);
-				$("#" + uid ).children(".activities").children(".msg").children(".location").hide();
-				$("#" + uid ).children(".activities").hide();
-			})
-		})
-	}
-
-	//muesta el usuario
-	function makeApiCallContact(uid) {
-		gapi.client.setApiKey(apiKey);
-		gapi.client.load('plus', 'v1', function(){
-			var request = gapi.client.plus.people.get({
-				'userId': uid
-			});
-			//perfil
-			request.execute(function(resp) {
-				if (resp.error){
-					console.log(resp.error)
-					$('#content').append("<p>Id does not exist: no image, name and genere</p>");
-				}else{
-					var img = "<img src='"+resp.image.url+"'class='media-object dp img-circle imagen'>";
-					var name = "<span> "+resp.displayName+" -";
-					var genere = "- "+resp.gender+"</span>";
-					var borrar='<button type="button" class=" borrar btn btn-labeled btn-danger"><span class="btn-label"><i class="glyphicon glyphicon-trash"></i></span>Trash</button>';
-					//console.log(uid)
-              		var abajo='<i class="glyphicon glyphicon-chevron-down text-muted"></i>';
-					var heading = "<div id ='"+uid+"'>"+img+name+genere+"</div>";
-					$('#content').append(heading);
-					$('#'+uid).append(borrar);
-					$('#'+uid).append(abajo);
-					$("#"+uid).children(".borrar").hide();
-					makeApiCallActivities(uid);
-				}
-			});
-	
+function makeApiCallActivities(uid){
+	var markercoord=[];
+	gapi.client.load('plus','v1', function(){
+		var request=gapi.client.plus.activities.list({
+			'collection': 'public',
+			'userId': uid
 		});
-	};
-
-	function addmark(lon, lat, idmsg, markers){
-		var markercoord=[];
-		id=idmsg
-		var id=L.marker([lat,lon]).bindPopup("lat "+lat+" lon "+lon).addTo(map);
-		markercoord.push(id);
-		markercoord.push(idmsg);
-		markercoordlist.push(markercoord);
-		markers.addLayer(id);
-		id.on("click", function(e){
-			$.each(markercoordlist, function(index, value){
-				if (jQuery.inArray(id, value)!=-1){
-					idm=value[1];
-					if($("#"+idm).children(".location").is(":hidden")){			
-						$("#"+idm).css("background-color", "#AFEEEE")
-						$("#"+idm).children(".location").show();
-						var longitud=$("#"+idm).children(".location").children(".longitud").html();
-						var latitud=$("#"+idm).children(".location").children(".latitud").html()
-						$("#foto").show();
-						photoflickr(idm, latitud, longitud);		
-					}else{
-						$("#"+idm).css("background-color", "")
-						$("#"+idm).children(".location").hide();
-						$("#markersinfo").html("");
-						$("#foto").hide();
-					}
+		umark.push(uid);
+		request.execute(function(resp){
+			var activities=document.createElement('div');
+			activities.setAttribute('class', 'activities');
+			for(i=0; i<resp.items.length;i++){
+				idmsg++;
+				var messages=document.createElement('div');
+				divmessages=createnode("div", "", "contentmsg", resp.items[i].title);
+				messages.appendChild(divmessages);
+				if(resp.items[i]["location"]!=undefined){
+					messages.setAttribute("class", "msg");
+					messages.setAttribute("id", "msg"+idmsg);
+					eleminfo=createnode("div", "", "locationinfo", "Localización")
+					messages.appendChild(eleminfo);
+					elem=createnode("div", "", "location", "")
+					item=createnode("div", "", "latitud", resp.items[i].location.position.latitude)
+					elem.appendChild(item);
+					item=createnode("div", "", "longitud", resp.items[i].location.position.longitude)
+					marcas=L.marker([resp.items[i].location.position.latitude, resp.items[i].location.position.longitude]);
+					umark.push(marcas);
+					elem.appendChild(item);
+					messages.appendChild(elem);
+				}else{
+					messages.setAttribute("class", "msg");
+					messages.setAttribute("id", "msg"+idmsg)
 				}
-			})		
+				activities.appendChild(messages);				
+			}
+			$("#" + uid ).append(activities);
+			$("#" + uid ).children(".activities").children(".msg").children(".location").hide();
+			$("#" + uid ).children(".activities").hide();
+		})
+	})
+}
+
+//muesta el usuario
+function makeApiCallContact(uid) {
+	gapi.client.setApiKey(apiKey);
+	gapi.client.load('plus', 'v1', function(){
+		var request = gapi.client.plus.people.get({
+			'userId': uid
+		});
+		//perfil
+		request.execute(function(resp) {
+			if (resp.error){
+				console.log(resp.error)
+				$('#content').append("<p>Id does not exist: no image, name and genere</p>");
+			}else{
+				var img = "<img src='"+resp.image.url+"'class='media-object dp img-circle imagen'>";
+				var name = "<span> "+resp.displayName+" -";
+				var genere = "- "+resp.gender+"</span>";
+				var borrar='<button type="button" class=" borrar btn btn-labeled btn-danger"><span class="btn-label"><i class="glyphicon glyphicon-trash"></i></span>Trash</button>';
+				//console.log(uid)
+				var abajo='<i class="glyphicon glyphicon-chevron-down text-muted"></i>';
+				var heading = "<div id ='"+uid+"'>"+img+name+genere+"</div>";
+				$('#content').append(heading);
+				$('#'+uid).append(borrar);
+				$('#'+uid).append(abajo);
+				$("#"+uid).children(".borrar").hide();
+				makeApiCallActivities(uid);
+			}
+		});
+	});
+};
+
+function addmark(lon, lat, idmsg, markers){
+	var markercoord=[];
+	id=idmsg
+	var id=L.marker([lat,lon]).bindPopup("lat "+lat+" lon "+lon).addTo(map);
+	markercoord.push(id);
+	markercoord.push(idmsg);
+	markercoordlist.push(markercoord);
+	markers.addLayer(id);
+	id.on("click", function(e){
+		$.each(markercoordlist, function(index, value){
+			if (jQuery.inArray(id, value)!=-1){
+				idm=value[1];
+				if($("#"+idm).children(".location").is(":hidden")){			
+					$("#"+idm).css("background-color", "#AFEEEE")
+					$("#"+idm).children(".location").show();
+					var longitud=$("#"+idm).children(".location").children(".longitud").html();
+					var latitud=$("#"+idm).children(".location").children(".latitud").html()
+					$("#foto").show();
+					photoflickr(idm, latitud, longitud);		
+				}else{
+					$("#"+idm).css("background-color", "")
+					$("#"+idm).children(".location").hide();
+					$("#markersinfo").html("");
+					$("#foto").hide();
+				}
+			}
 		})		
-	}
+	})		
+}
 
+function onRemove(map){
+	map.removeLayer(markers);
+}
 
-	function onRemove(map){
-		map.removeLayer(markers);
-	}
-
-	function photoflickr(id, lat, lon){
-		var NominatimAPI = 'http://nominatim.openstreetmap.org/reverse?json_callback=?';
+function photoflickr(id, lat, lon){
+	var NominatimAPI = 'http://nominatim.openstreetmap.org/reverse?json_callback=?';
 	$.getJSON( NominatimAPI, {
 		lat: lat,
 		lon: lon,
@@ -165,29 +161,29 @@ function crear_mapa(){
 			});
 		});
 	});
-	}
+}
 
-	function selectmsg(value, index){
-		var marker=markercoordlist[index][0];
-		marker.openPopup(marker.getLatLng());
-		id=value[1];
-		$("#"+id).css("background-color", "#AFEEEE")
-		var longitud=$("#"+id).children(".location").children(".longitud").html();
-		var latitud=$("#"+id).children(".location").children(".latitud").html()
-		photoflickr(id, latitud, longitud);
-	}
+function selectmsg(value, index){
+	var marker=markercoordlist[index][0];
+	marker.openPopup(marker.getLatLng());
+	id=value[1];
+	$("#"+id).css("background-color", "#AFEEEE")
+	var longitud=$("#"+id).children(".location").children(".longitud").html();
+	var latitud=$("#"+id).children(".location").children(".latitud").html()
+	photoflickr(id, latitud, longitud);
+};
 
-	function unselectmsg(value, index){
-		console.log(value+"index"+index)
-		var marker=markercoordlist[index][0];
-		console.log(marker);
-		marker.closePopup(marker.getLatLng());
-		id=value[1];
-		$("#"+id).css("background-color", "")
-		var longitud=$("#"+id).children(".location").children(".longitud").html();
-		var latitud=$("#"+id).children(".location").children(".latitud").html()
-		$("#markersinfo").html("");
-	}
+function unselectmsg(value, index){
+	console.log(value+"index"+index)
+	var marker=markercoordlist[index][0];
+	console.log(marker);
+	marker.closePopup(marker.getLatLng());
+	id=value[1];
+	$("#"+id).css("background-color", "")
+	var longitud=$("#"+id).children(".location").children(".longitud").html();
+	var latitud=$("#"+id).children(".location").children(".latitud").html()
+	$("#markersinfo").html("");
+}
 
 $(document).ready(function(){
 	$("#mapa").hide();
@@ -196,11 +192,9 @@ $(document).ready(function(){
 	markers=new L.FeatureGroup();
 	idmsg=0;
 	var hideform=true;
-
+	
 	$('.cycle').cyclotron();
-
-    //$(".cycle").css('cursor', 'url(http://i.imgur.com/FrQFOJo.png),auto');
-
+	
 	$("#gplus").click(function() {
 		if (hideform){
 			console.log("show")
@@ -253,9 +247,7 @@ $(document).ready(function(){
 		};
 	});
 	
-	
-
-	$("#content").on("click", ".imagen", function(){
+	$("#content").on("mouseover", ".imagen", function(){
 		id=$(this).parent().attr("id");
 		if($("#"+id).children(".borrar").is(":hidden")){
 			$("#"+id).children(".borrar").show();

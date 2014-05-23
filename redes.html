@@ -3,12 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 		<title> Redes </title>
-		  <link rel="shortcut icon" type="image/png" href="/images/icon.ico"/>
-
+		<link rel="shortcut icon" type="image/png" href="/images/icon.ico"/>
 		<link href='http://fonts.googleapis.com/css?family=Cantarell:400,700' rel='stylesheet' type='text/css'>
-    	<link href="css/jquery.FlowupLabels.css" rel='stylesheet' type='text/css'>
-    	<link href="css/ui-lightness/jquery-ui.css" rel="stylesheet">
-   	    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="css/jquery.FlowupLabels.css" rel='stylesheet' type='text/css'>
+		<link href="css/ui-lightness/jquery-ui.css" rel="stylesheet">
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<script src='js/jquery.js'></script>
 		<script src='js/jquery-ui.js'></script>
 		<script src='js/jquery.FlowupLabels.js'></script>
@@ -18,50 +17,89 @@
 		<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 		<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
-		    	<link href="css/redes.css" rel='stylesheet' type='text/css'>
-
-
-
+		<link href="css/redes.css" rel='stylesheet' type='text/css'>
 	</head>
 	<body>
-	<header><div class="cycle">
-
-    </div></header>
-
-	<div id="tabs">
-		 <ul>
-	    <li><a href="#tabs-1">Añadir usuarios</a></li>
-	    <li><a href="#tabs-2">Usuarios</a></li>
-	    <li id="mapa"><a href="#tabs-3">Mapa</a></li>
-	    <li id="foto"><a href="#tabs-4">Foto</a></li>
-	  </ul>
-		<div id="tabs-1">
-			<img src="images/gplus.png" id="gplus">
-			<div id='formContainer'>
-				<form id="formBody" class="FlowupLabels">
-					<div class='fl_wrap'>
-						<label class='fl_label' for='rf_name'>Id:</label>
-						<input class='fl_input' type='text' id='rf_name' value="" autofocus></input>
+		<header>
+			<div class="cycle"></div>
+		</header>
+		<div id="tabs">
+			<ul>
+				<li><a href="#tabs-1">Readme</a></li>
+				<li><a href="#tabs-2">New users</a></li>
+				<li><a href="#tabs-3">Users</a></li>
+				<li id="mapa"><a href="#tabs-4">Map</a></li>
+				<li id="foto"><a href="#tabs-5">Photo</a></li>
+	  		</ul>
+			<div id="tabs-1">
+				<div class="row">
+ 					<div class="col-md-4">
+						<p>
+							Asignatura: Desarrollo de aplicaciones telematicas
+							<br></br>
+							Nombre: Itziar Polo Martinez
+							<br></br>
+							User-lab: itziar
+							<br></br>
+							Resumen de las peculiaridades:
+							<br></br>
+							Creo que las peculiaridades que puede tener mi aplicacion son:
+							<br></br>
+							-Para desplegar los comentarios hay que hacer click en la flecha
+							<br></br>
+							-Los comentarios que llevan asociados una localizacion tienen puesto la palabra localizacion<br></br>
+							-Los comentarios se resaltan usando otro color y en el mapa sólo se activa el último comentario abierto con un popup de la biblioteca leaflet<br></br>
+							-Las pestañas se van activando cuando haya datos que mostrar mientras tanto están ocultas<br></br>
+							-No se puede añadir dos veces a un mismo usuario, ni tampoco se puede enviar un formulario vacío<br></br>
+							-Utilización de localstorage para guardar los ids de los usuarios<br></br>
+							-Footer de copyright con el enlace al código en github (mostrado en la parte opcional)<br></br>
+							<br></br>
+							Lista de funciones optativas:<br></br>
+							-Añadido un banner giratorio en la cabecera de la práctica<br></br>
+							-Usada la biblioteca flowuplabels para el formulario<br></br>
+							-CSS3 añadido a las fotos de los usuarios<br></br>
+							-Favicon<br></br>
+							-Videos del funcionamiento de la práctica embebidos en la aplicación (a la hora de grabar los videos son los de la práctica de SAT, luego en la entrega los videos de ésta práctica)<br></br>
+						</p>
+	 				</div>
+	 				<div class="col-md-8">
+						<div class="vid">
+							<iframe width="560" height="315" src="//www.youtube.com/embed/mV18WSX2XHQ" allowfullscreen=""></iframe>
+						</div>
+	 					<div class="vid">
+							<iframe width="560" height="315" src="//www.youtube.com/embed/XFwYfevlHc8" allowfullscreen=""></iframe>
+						</div>
 					</div>
-					<p>
-						<button class='rf_submit' type='submit' id="enviar">Search</button>
-					</p>
-				</form>
+				</div>
+			</div>	  
+			<div id="tabs-2">
+				<div id="container">
+					<img src="images/gplus.png" id="gplus">
+					<div id='formContainer'>
+						<form id="formBody" class="FlowupLabels">
+							<div class='fl_wrap'>
+								<label class='fl_label' for='rf_name'>Id:</label>
+								<input class='fl_input' type='text' id='rf_name' value="" autofocus></	input>
+							</div>
+							<p>
+								<button class='rf_submit' type='submit' id="enviar">Search</button>
+							</p>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div id="tabs-3">
+				<div id="content"></div>
+			</div>
+			<div id="tabs-4">
+				<div id="map"></div>
+			</div>
+			<div id="tabs-5">
+				<div id="markersinfo"></div>
 			</div>
 		</div>
-	  	<div id="tabs-2">
-	    	<div id="content"></div>
-	  	</div>
-  		<div id="tabs-3">
-   			<div id="map"></div>
-   		</div>
-   		<div id="tabs-4">
-			<div id="markersinfo"></div>
-
-  		</div>
-	</div>
-	<div class="footer">
-	Copyright &copy  Itziar Polo 2014
-</div>
+		<div class="footer">
+			Copyright &copy  Itziar Polo 2014 <a href="https://github.com/itziar/DAT.git">GitHub</a>
+		</div>
 	</body>
 </html>
